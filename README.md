@@ -52,7 +52,7 @@ python3 main.py          # test once; then reboot — it autostarts
 |---|---|---|
 | `API_URL` | `http://localhost:3000` | Backend base (no `/api`). On the Pi use the LAN IP. |
 | `CLASSROOM_ID` / `DEVICE_ID` | auto-picks first | Pin to one room if you have multiple classrooms. |
-| `PI_EMAIL` / `PI_PASSWORD` | — | Service account so `POST /devices/:id/telemetry` is authenticated. |
+| `PI_USERNAME` / `PI_PASSWORD` | — | Pi credentials for `POST /devices/:id/telemetry` — must match the device's `piUsername`/`piPassword` set in Admin → Devices. Sent as `x-pi-username` / `x-pi-password` headers. |
 | `POLL_SESSION_S` | `5` | How often to check for a live session. |
 | `POLL_TELEMETRY_S` | `30` | How often to push telemetry. |
 | `AUTO_OPEN_JITSI` | `true` | Auto-launch Chromium kiosk on `status=live`. |

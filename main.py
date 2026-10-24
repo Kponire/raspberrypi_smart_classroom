@@ -117,7 +117,7 @@ def collect_telemetry() -> dict:
 class PiApp(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Smart Classroom — TV")
+        self.title("Smart Classroom")
         self.configure(bg=CANVAS)
         try:
             self.attributes("-fullscreen", bool(config.FULLSCREEN))
@@ -130,8 +130,6 @@ class PiApp(tk.Tk):
             self.geometry("1280x720")
 
         self.api = ApiClient()
-        if config.PI_EMAIL:
-            threading.Thread(target=self.api.login, daemon=True).start()
 
         # state
         self.classroom: Optional[dict] = None

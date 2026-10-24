@@ -1,0 +1,164 @@
+{
+  "info": {
+    "name": "Smart Classroom - Raspberry Pi interface",
+    "description": "Endpoints exercised by raspbarrypi_interface (api_client.py) before deploying to the Pi. Base URL defaults to http://localhost:3000; override the baseUrl collection variable for a real backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
+    { "key": "sessionId", "value": "example-session-id", "type": "string" },
+    { "key": "deviceId", "value": "example-device-id", "type": "string" },
+    { "key": "courseId", "value": "example-course-id", "type": "string" },
+    { "key": "piUsername", "value": "", "type": "string" },
+    { "key": "piPassword", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "Liveness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+          }
+        },
+        {
+          "name": "Readiness",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/health/ready", "host": ["{{baseUrl}}"], "path": ["health", "ready"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sessions",
+      "item": [
+        {
+          "name": "List sessions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions?status=live",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions"],
+              "query": [{ "key": "status", "value": "live", "disabled": false }]
+            }
+          }
+        },
+        {
+          "name": "List sessions (all)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/sessions", "host": ["{{baseUrl}}"], "path": ["api", "sessions"] }
+          }
+        },
+        {
+          "name": "Get session by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/sessions/{{sessionId}}", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "{{sessionId}}"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Classrooms",
+      "item": [
+        {
+          "name": "List classrooms",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/classrooms", "host": ["{{baseUrl}}"], "path": ["api", "classrooms"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Devices",
+      "item": [
+        {
+          "name": "List devices",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/devices", "host": ["{{baseUrl}}"], "path": ["api", "devices"] }
+          }
+        },
+        {
+          "name": "Get device by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/devices/{{deviceId}}", "host": ["{{baseUrl}}"], "path": ["api", "devices", "{{deviceId}}"] }
+          }
+        },
+        {
+          "name": "Post telemetry (Pi)",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "x-pi-username", "value": "{{piUsername}}" },
+              { "key": "x-pi-password", "value": "{{piPassword}}" },
+              { "key": "x-device-username", "value": "{{piUsername}}" },
+              { "key": "x-device-password", "value": "{{piPassword}}" }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cpuPercent\": 12,\n  \"memoryPercent\": 45,\n  \"temperatureC\": 52,\n  \"storageUsedGb\": 8.4,\n  \"storageTotalGb\": 32,\n  \"uptimeHours\": 3\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": { "raw": "{{baseUrl}}/api/devices/{{deviceId}}/telemetry", "host": ["{{baseUrl}}"], "path": ["api", "devices", "{{deviceId}}", "telemetry"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Courses",
+      "item": [
+        {
+          "name": "List courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/courses", "host": ["{{baseUrl}}"], "path": ["api", "courses"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Materials",
+      "item": [
+        {
+          "name": "List materials (all)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/materials", "host": ["{{baseUrl}}"], "path": ["api", "materials"] }
+          }
+        },
+        {
+          "name": "List materials by course",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/materials?courseId={{courseId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "materials"],
+              "query": [{ "key": "courseId", "value": "{{courseId}}" }]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

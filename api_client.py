@@ -3,7 +3,6 @@ import json
 import urllib.request
 import urllib.error
 import urllib.parse
-import time
 from typing import Any, Optional
 
 import config
@@ -20,36 +19,32 @@ class ApiClient:
         self.token: Optional[str] = None
         self.base = f"{config.API_URL}{config.API_PREFIX}"
 
-    # ---- auth ----
-    def login(self) -> bool:
-        if not config.PI_EMAIL or not config.PI_PASSWORD:
-            return False
-        try:
-            data = self._request("/auth/login", method="POST",
-                                 body={"email": config.PI_EMAIL.strip().lower(),
-                                       "password": config.PI_PASSWORD}, auth=False)
-            tok = data.get("token") if isinstance(data, dict) else None
-            if tok:
-                self.token = str(tok)
-                return True
-        except Exception:
-            pass
-        return False
+    def _pi_headers(self) -> dict[str, str]:
+        h: dict[str, str] = {}
+        if config.PI_USERNAME:
+            h["x-pi-username"] = config.PI_USERNAME
+            h["x-device-username"] = config.PI_USERNAME
+        if config.PI_PASSWORD:
+            h["x-pi-password"] = config.PI_PASSWORD
+            h["x-device-password"] = config.PI_PASSWORD
+        return h
 
-    # ---- low level ----
     def _request(self, path: str, method: str = "GET",
-                 body: Any = None, query: dict | None = None, auth: bool = True) -> Any:
+                 body: Any = None, query: dict | None = None,
+                 auth: bool = True, extra_headers: dict | None = None) -> Any:
         qs = ""
         if query:
             q = {k: str(v) for k, v in query.items() if v is not None and str(v) != ""}
             if q:
                 qs = "?" + urllib.parse.urlencode(q)
         url = f"{self.base}{path}{qs}"
-        headers = {}
+        headers: dict[str, str] = {}
         if body is not None:
             headers["Content-Type"] = "application/json"
         if auth and self.token:
             headers["Authorization"] = f"Bearer {self.token}"
+        if extra_headers:
+            headers.update(extra_headers)
         data = json.dumps(body).encode() if body is not None else None
         req = urllib.request.Request(url, data=data, headers=headers, method=method)
         try:
@@ -77,7 +72,6 @@ class ApiClient:
         except urllib.error.URLError as e:
             raise ApiError(0, str(e.reason) if hasattr(e, "reason") else str(e))
 
-    # ---- high level (mirrors Frontend lib/api.ts) ----
     def get_sessions(self, status: str | None = None) -> list[dict]:
         q: dict = {}
         if status:
@@ -125,25 +119,18 @@ class ApiClient:
             return []
 
     def post_telemetry(self, device_id: str, payload: dict) -> bool:
+        # Pi authenticates with x-pi-username / x-pi-password when the device
+        # was registered with piUsername/piPassword in Admin → Devices.
         try:
             self._request(f"/devices/{urllib.parse.quote(device_id)}/telemetry",
-                          method="POST", body=payload, auth=bool(self.token))
+                          method="POST", body=payload, auth=False,
+                          extra_headers=self._pi_headers())
             return True
         except ApiError:
-            # retry once with login
-            if self.token is None and config.PI_EMAIL:
-                if self.login():
-                    try:
-                        self._request(f"/devices/{urllib.parse.quote(device_id)}/telemetry",
-                                      method="POST", body=payload, auth=True)
-                        return True
-                    except ApiError:
-                        return False
             return False
 
     def health(self) -> bool:
         try:
-            # lightweight check — sessions endpoint is public
             self._request("/sessions", query={"status": "live"}, auth=False)
             return True
         except ApiError as e:
