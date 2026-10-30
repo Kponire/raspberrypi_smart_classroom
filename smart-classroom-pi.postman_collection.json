@@ -7,10 +7,10 @@
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:3000", "type": "string" },
     { "key": "sessionId", "value": "example-session-id", "type": "string" },
-    { "key": "deviceId", "value": "example-device-id", "type": "string" },
+    { "key": "deviceId", "value": "pi-bec8d0b9", "type": "string" },
     { "key": "courseId", "value": "example-course-id", "type": "string" },
-    { "key": "piUsername", "value": "", "type": "string" },
-    { "key": "piPassword", "value": "", "type": "string" }
+    { "key": "piUsername", "value": "pi_one", "type": "string" },
+    { "key": "piPassword", "value": "Oluwaponire1234#", "type": "string" }
   ],
   "item": [
     {
@@ -21,7 +21,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/health", "host": ["{{baseUrl}}"], "path": ["health"] }
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
           }
         },
         {
@@ -29,7 +33,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/health/ready", "host": ["{{baseUrl}}"], "path": ["health", "ready"] }
+            "url": {
+              "raw": "{{baseUrl}}/health/ready",
+              "host": ["{{baseUrl}}"],
+              "path": ["health", "ready"]
+            }
           }
         }
       ]
@@ -55,7 +63,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/sessions", "host": ["{{baseUrl}}"], "path": ["api", "sessions"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions"]
+            }
           }
         },
         {
@@ -63,7 +75,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/sessions/{{sessionId}}", "host": ["{{baseUrl}}"], "path": ["api", "sessions", "{{sessionId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/sessions/{{sessionId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "sessions", "{{sessionId}}"]
+            }
           }
         }
       ]
@@ -76,7 +92,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/classrooms", "host": ["{{baseUrl}}"], "path": ["api", "classrooms"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/classrooms",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "classrooms"]
+            }
           }
         }
       ]
@@ -89,7 +109,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/devices", "host": ["{{baseUrl}}"], "path": ["api", "devices"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/devices",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "devices"]
+            }
           }
         },
         {
@@ -97,7 +121,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/devices/{{deviceId}}", "host": ["{{baseUrl}}"], "path": ["api", "devices", "{{deviceId}}"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/devices/{{deviceId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "devices", "{{deviceId}}"]
+            }
           }
         },
         {
@@ -116,7 +144,11 @@
               "raw": "{\n  \"cpuPercent\": 12,\n  \"memoryPercent\": 45,\n  \"temperatureC\": 52,\n  \"storageUsedGb\": 8.4,\n  \"storageTotalGb\": 32,\n  \"uptimeHours\": 3\n}",
               "options": { "raw": { "language": "json" } }
             },
-            "url": { "raw": "{{baseUrl}}/api/devices/{{deviceId}}/telemetry", "host": ["{{baseUrl}}"], "path": ["api", "devices", "{{deviceId}}", "telemetry"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/devices/{{deviceId}}/telemetry",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "devices", "{{deviceId}}", "telemetry"]
+            }
           }
         }
       ]
@@ -129,7 +161,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/courses", "host": ["{{baseUrl}}"], "path": ["api", "courses"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/courses",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "courses"]
+            }
           }
         }
       ]
@@ -142,7 +178,11 @@
           "request": {
             "method": "GET",
             "header": [],
-            "url": { "raw": "{{baseUrl}}/api/materials", "host": ["{{baseUrl}}"], "path": ["api", "materials"] }
+            "url": {
+              "raw": "{{baseUrl}}/api/materials",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "materials"]
+            }
           }
         },
         {

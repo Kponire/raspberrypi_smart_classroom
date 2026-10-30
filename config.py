@@ -27,3 +27,10 @@ POLL_TELEMETRY_S = int(_env("POLL_TELEMETRY_S", "30") or 30)
 AUTO_OPEN_JITSI = _env("AUTO_OPEN_JITSI", "true").lower() not in ("0", "false", "no")
 JITSI_BROWSER_CMD = _env("JITSI_BROWSER_CMD", "")
 FULLSCREEN     = _env("FULLSCREEN", "true").lower() not in ("0", "false", "no")
+
+# Jitsi / JaaS. When JAAS_APP_ID is set the Pi targets the 8x8.vc tenant and
+# mints a device token from the backend — JaaS shows an 8x8 login prompt to
+# anyone joining without one. Falls back to public meet.jit.si when unset.
+JAAS_APP_ID    = _env("JAAS_APP_ID", _env("VITE_JAAS_APP_ID", ""))
+JITSI_DOMAIN   = _env("JITSI_DOMAIN", "")   # default 8x8.vc when an App ID is set
+JITSI_HOST     = _env("JITSI_HOST", "")     # full override, e.g. https://meet.jit.si

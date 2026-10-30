@@ -48,16 +48,27 @@ BORDER = "#b9d5e6"
 DANGER = "#b3261e"
 SUCCESS= "#1a7f4b"
 
-JITSI_HOST = "https://meet.jit.si"
+def _jitsi_base() -> str:
+    if config.JITSI_HOST:
+        return config.JITSI_HOST.rstrip("/")
+    if config.JAAS_APP_ID:
+        return f"https://{config.JITSI_DOMAIN or '8x8.vc'}"
+    return "https://meet.jit.si"
 
 
-def jitsi_url(room: str) -> str:
+def jitsi_url(room: str, jwt: Optional[str] = None,
+              display_name: str = "Classroom TV") -> str:
+    app_id = config.JAAS_APP_ID
+    path = (f"{app_id}/{urllib.parse.quote(room)}" if app_id
+            else urllib.parse.quote(room))
+    # Jitsi JSON-parses hash values, so string values must be quoted.
     q = urllib.parse.urlencode({
         "config.prejoinPageEnabled": "false",
         "config.disableDeepLinking": "true",
-        "userInfo.displayName": "Classroom TV",
+        "userInfo.displayName": f'"{display_name}"',
     })
-    return f"{JITSI_HOST}/{urllib.parse.quote(room)}#{q}"
+    query = f"?jwt={urllib.parse.quote(jwt, safe='')}" if jwt else ""
+    return f"{_jitsi_base()}/{path}{query}#{q}"
 
 
 def fmt_clock(dt: Optional[datetime] = None) -> str:
@@ -535,10 +546,28 @@ class PiApp(tk.Tk):
 
     # ── jitsi kiosk ──
     def _open_jitsi(self, room: str):
-        url = jitsi_url(room)
         # already open this room
         if self._jitsi_proc and self._jitsi_proc.poll() is None:
             return
+        # minting the device token is a network call — keep it off the Tk thread
+        threading.Thread(target=self._launch_jitsi, args=(room,), daemon=True).start()
+
+    def _device_id(self) -> str:
+        return str(config.DEVICE_ID or (self.device or {}).get("id")
+                   or (self.classroom or {}).get("deviceId") or "")
+
+    def _launch_jitsi(self, room: str):
+        jwt = None
+        if config.JAAS_APP_ID:
+            sid = str((self.session or {}).get("id") or "")
+            did = self._device_id()
+            if sid and did:
+                res = self.api.get_pi_jitsi_token(sid, did) or {}
+                jwt = res.get("token")
+            if not jwt:
+                print("jitsi: no device token from backend — "
+                      "the TV may be asked to log in to 8x8")
+        url = jitsi_url(room, jwt)
         cmd = config.JITSI_BROWSER_CMD.strip()
         try:
             if cmd:
@@ -551,7 +580,8 @@ class PiApp(tk.Tk):
                 for exe in ("chromium-browser", "chromium", "google-chrome", "chrome"):
                     try:
                         self._jitsi_proc = subprocess.Popen(
-                            [exe, "--kiosk", "--noerrdialogs", "--disable-infobars",
+                            [exe, "--kiosk", "--no-sandbox", "--disable-dev-shm-usage",
+                             "--noerrdialogs", "--disable-infobars",
                              "--autoplay-policy=no-user-gesture-required", url]
                         )
                         break

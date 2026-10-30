@@ -118,6 +118,18 @@ class ApiClient:
         except ApiError:
             return []
 
+    def get_pi_jitsi_token(self, session_id: str, device_id: str) -> Optional[dict]:
+        # Non-moderator JaaS token for the TV. JaaS shows an 8x8 login prompt to
+        # anonymous joiners, so the Pi authenticates with its device credentials.
+        try:
+            return self._request(
+                f"/sessions/{urllib.parse.quote(session_id)}/pi-jitsi-token",
+                auth=False,
+                extra_headers={**self._pi_headers(), "x-device-id": device_id},
+            )
+        except ApiError:
+            return None
+
     def post_telemetry(self, device_id: str, payload: dict) -> bool:
         # Pi authenticates with x-pi-username / x-pi-password when the device
         # was registered with piUsername/piPassword in Admin → Devices.
